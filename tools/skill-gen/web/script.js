@@ -146,6 +146,11 @@
 
   if (langToggleBtn) {
     langToggleBtn.addEventListener('click', function () {
+      var target = langToggleBtn.getAttribute('data-target');
+      if (target) {
+        window.location.href = target;
+        return;
+      }
       window.location.href = isZh ? './index.html' : './index.zh-TW.html';
     });
   }

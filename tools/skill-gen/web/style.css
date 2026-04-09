@@ -120,6 +120,10 @@ body {
   font-weight: 700;
 }
 
+.helper-after-lead {
+  margin-top: 10px;
+}
+
 .lang-link {
   color: var(--accent);
   text-decoration: none;

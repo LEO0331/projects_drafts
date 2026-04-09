@@ -15,8 +15,7 @@
     <main class="app">
       <header class="hero panel">
         <div class="utility-bar">
-          <button id="helpBtn" class="btn-ghost utility-icon-btn" type="button" aria-label="使用說明" title="使用說明">?</button>
-          <button id="langToggleBtn" class="btn-ghost utility-btn" type="button">EN</button>
+          <button id="langToggleBtn" class="btn-ghost utility-btn" type="button" data-target="./index.html">EN</button>
         </div>
         <p class="kicker">Frontend Skill Forge</p>
         <h1>把 3 個靜態檔案轉成可重用的 <code>SKILL.md</code></h1>
@@ -24,6 +23,7 @@
           匯入任意小功能的 <code>index.html</code>、<code>style.css</code>、<code>script.js</code>，
           產出可給 Codex、Claude Code 等 AI 工作流使用的結構化技能檔。
         </p>
+        <button id="helpBtn" class="btn-ghost utility-icon-btn helper-after-lead" type="button" aria-label="使用說明" title="使用說明">?</button>
         <div class="hero-meta" id="statusText">等待輸入中。</div>
       </header>
 
