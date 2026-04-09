@@ -34,7 +34,9 @@
       noOutput: 'No output available to copy.',
       noClipboard: 'Clipboard API unavailable. Copy manually from output.',
       copied: 'Copied SKILL.md content to clipboard.',
-      clipboardBlocked: 'Clipboard blocked by browser. Copy manually from output.'
+      clipboardBlocked: 'Clipboard blocked by browser. Copy manually from output.',
+      sourceUpload: 'Upload files',
+      sourceFolder: 'Folder input'
     },
     zh: {
       cliHintEmpty: '提示：輸入資料夾路徑可自動產生 CLI 指令。',
@@ -48,7 +50,9 @@
       noOutput: '目前沒有可複製的輸出。',
       noClipboard: '瀏覽器不支援剪貼簿 API，請手動複製。',
       copied: '已將 SKILL.md 內容複製到剪貼簿。',
-      clipboardBlocked: '瀏覽器阻擋剪貼簿權限，請手動複製。'
+      clipboardBlocked: '瀏覽器阻擋剪貼簿權限，請手動複製。',
+      sourceUpload: '上傳檔案',
+      sourceFolder: '資料夾輸入'
     }
   };
 
@@ -124,14 +128,14 @@
   }
 
   fileInput.addEventListener('change', function () {
-    hydrateFromFiles(fileInput.files, isZh ? '上傳檔案' : 'upload').catch(function (err) {
+    hydrateFromFiles(fileInput.files, t('sourceUpload')).catch(function (err) {
       setStatus(t('uploadErr') + err.message, 'error');
       alert(t('uploadErr') + err.message);
     });
   });
 
   folderInput.addEventListener('change', function () {
-    hydrateFromFiles(folderInput.files, isZh ? '資料夾輸入' : 'folder input').catch(function (err) {
+    hydrateFromFiles(folderInput.files, t('sourceFolder')).catch(function (err) {
       setStatus(t('folderErr') + err.message, 'error');
       alert(t('folderErr') + err.message);
     });

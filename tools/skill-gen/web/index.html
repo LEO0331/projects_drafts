@@ -14,16 +14,16 @@
     <div class="bg-grid" aria-hidden="true"></div>
     <main class="app">
       <header class="hero panel">
-        <div class="utility-bar">
-          <button id="langToggleBtn" class="btn-ghost utility-btn" type="button" data-target="./index.zh-TW.html">繁中</button>
-        </div>
         <p class="kicker">Frontend Skill Forge</p>
         <h1>Turn 3 Static Files Into a Reusable <code>SKILL.md</code></h1>
         <p class="lead">
           Feed <code>index.html</code>, <code>style.css</code>, and <code>script.js</code> from any mini-feature.
           Get structured skill output ready for Codex, Claude Code, or other AI workflows.
         </p>
-        <button id="helpBtn" class="btn-ghost utility-icon-btn helper-after-lead" type="button" aria-label="How to use" title="How to use">?</button>
+        <div class="hero-tools helper-after-lead">
+          <button id="helpBtn" class="btn-ghost utility-icon-btn" type="button" aria-label="How to use" title="How to use">?</button>
+          <button id="langToggleBtn" class="btn-ghost utility-btn" type="button" data-target="./index.zh-TW.html">繁中</button>
+        </div>
         <div class="hero-meta" id="statusText">Waiting for input.</div>
       </header>
 
