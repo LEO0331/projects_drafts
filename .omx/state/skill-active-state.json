@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "active": true,
+  "skill": "security-review",
+  "keyword": "$security-review",
+  "phase": "reviewing",
+  "activated_at": "2026-04-09T01:10:30.987Z",
+  "updated_at": "2026-04-09T01:23:14.930Z",
+  "source": "keyword-detector",
+  "input_lock": null
+}

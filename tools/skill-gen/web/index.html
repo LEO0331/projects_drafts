@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'"
+    />
+    <title>3-File to SKILL.md Generator</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="bg-grid" aria-hidden="true"></div>
+    <main class="app">
+      <header class="hero panel">
+        <p class="kicker">Frontend Skill Forge</p>
+        <h1>Turn 3 Static Files Into a Reusable <code>SKILL.md</code></h1>
+        <p class="lead">
+          Feed <code>index.html</code>, <code>style.css</code>, and <code>script.js</code> from any mini-feature.
+          Get structured skill output ready for Codex, Claude Code, or other AI workflows.
+        </p>
+        <div class="hero-meta" id="statusText">Waiting for input.</div>
+      </header>
+
+      <section class="panel input-panel">
+        <div class="section-head">
+          <h2>1. Configure</h2>
+          <p>Name and mode for generated output.</p>
+        </div>
+        <div class="field-grid two">
+          <label>Feature Name
+            <input id="featureName" placeholder="LoginForm" />
+          </label>
+          <label>Mode
+            <select id="mode">
+              <option value="preserve">preserve</option>
+              <option value="modernize">modernize</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="section-head">
+          <h2>2. Provide Files</h2>
+          <p>Use upload, folder picker, or direct paste.</p>
+        </div>
+        <div class="field-grid two">
+          <label>Upload Files
+            <input id="fileInput" type="file" multiple />
+          </label>
+          <label>Folder Input
+            <input id="folderInput" type="file" webkitdirectory directory multiple />
+          </label>
+        </div>
+        <p class="hint">Folder mode expects <code>index.html</code>, <code>style.css</code>, and <code>script.js</code> in one directory.</p>
+
+        <div class="section-head">
+          <h2>3. CLI Handoff (Optional)</h2>
+          <p>Paste a local folder path to auto-build the CLI command.</p>
+        </div>
+        <label>Local folder path
+          <input id="folderPath" placeholder="/path/to/feature-folder" />
+        </label>
+        <pre id="cliHint"></pre>
+
+        <div class="section-head">
+          <h2>4. Paste Content</h2>
+          <p>If you already have file text, paste directly here.</p>
+        </div>
+        <label>index.html
+          <textarea id="indexHtml" rows="8"></textarea>
+        </label>
+        <label>style.css
+          <textarea id="styleCss" rows="8"></textarea>
+        </label>
+        <label>script.js
+          <textarea id="scriptJs" rows="8"></textarea>
+        </label>
+
+        <div class="actions">
+          <button id="generateBtn" class="btn-primary">Generate SKILL.md</button>
+          <button id="downloadBtn" class="btn-ghost" disabled>Download</button>
+          <button id="copyBtn" class="btn-ghost" disabled>Copy</button>
+        </div>
+      </section>
+
+      <section class="panel output-panel">
+        <div class="section-head output-head">
+          <h2>Generated Output</h2>
+          <p>Review and export the markdown artifact.</p>
+        </div>
+        <textarea id="output" rows="36" readonly></textarea>
+      </section>
+    </main>
+
+    <script src="../skillgen-core.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>

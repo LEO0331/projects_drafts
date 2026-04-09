@@ -12,11 +12,11 @@ function randomJoke() {
     fetch('https://icanhazdadjoke.com', config)
         .then(response => response.json())
         .then(data => {
-            joke.innerHTML = data.joke
+            joke.textContent = data.joke
     })
     /* async/await
     const response = await fetch('https://icanhazdadjoke.com', config)
     const data = await response.json()
-    joke.innerHTML = data.joke
+    joke.textContent = data.joke
 */
 }

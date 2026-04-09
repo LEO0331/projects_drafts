@@ -1,14 +1,39 @@
-//API Key
-const API_URL = 'https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=3fd2be6f0c70a2a598f084ddfb75487c&page=1'
+const TMDB_KEY_STORAGE = 'tmdb_api_key'
+const TMDB_BASE = 'https://api.themoviedb.org/3'
 const IMG_PATH = 'https://image.tmdb.org/t/p/w1280'
-const SEARCH_API = 'https://api.themoviedb.org/3/search/movie?api_key=3fd2be6f0c70a2a598f084ddfb75487c&query="'
 
 const main = document.getElementById('main')
 const form = document.getElementById('form')
 const search = document.getElementById('search')
 const btn = document.querySelector('.btn')
-//initial movies from api
-getMovies(API_URL)
+let apiKey = getApiKey()
+if(apiKey) {
+    getMovies(getDiscoverApi())
+}
+
+function getApiKey() {
+    const fromStorage = localStorage.getItem(TMDB_KEY_STORAGE)
+    if(fromStorage) {
+        return fromStorage
+    }
+    const input = window.prompt('Enter your TMDB API key to load movies. The key is stored in localStorage on this browser.')
+    if(input && input.trim()) {
+        const key = input.trim()
+        localStorage.setItem(TMDB_KEY_STORAGE, key)
+        return key
+    }
+    main.textContent = 'TMDB API key is required to load movies.'
+    return ''
+}
+
+function getDiscoverApi() {
+    return `${TMDB_BASE}/discover/movie?sort_by=popularity.desc&api_key=${encodeURIComponent(apiKey)}&page=1`
+}
+
+function getSearchApi(term) {
+    return `${TMDB_BASE}/search/movie?api_key=${encodeURIComponent(apiKey)}&query=${encodeURIComponent(term)}`
+}
+
 async function getMovies(url) {
     const response = await fetch(url)
     const data = await response.json()
@@ -21,17 +46,32 @@ function showMovies(movies) {
         const {title, poster_path, vote_average, overview} = movie//destructure
         const movieEl = document.createElement('div')//<div></div>
         movieEl.classList.add('movie')//<div class="movie"></div>
-        movieEl.innerHTML = `
-            <img src="${IMG_PATH + poster_path}" alt="${title}">
-            <div class="movie-info">
-                <h3>${title}</h3>
-                <span class="${getClassByRate(vote_average)}">${vote_average}</span>
-            </div>
-            <div class="overview">
-                <h3>Overview</h3>
-                ${overview}
-            </div>
-        `
+        const poster = document.createElement('img')
+        poster.src = IMG_PATH + poster_path
+        poster.alt = title || 'movie'
+
+        const movieInfo = document.createElement('div')
+        movieInfo.className = 'movie-info'
+        const heading = document.createElement('h3')
+        heading.textContent = title || 'Untitled'
+        const rating = document.createElement('span')
+        rating.className = getClassByRate(vote_average)
+        rating.textContent = String(vote_average || 0)
+        movieInfo.appendChild(heading)
+        movieInfo.appendChild(rating)
+
+        const overviewWrap = document.createElement('div')
+        overviewWrap.className = 'overview'
+        const overviewHeading = document.createElement('h3')
+        overviewHeading.textContent = 'Overview'
+        const overviewText = document.createElement('p')
+        overviewText.textContent = overview || ''
+        overviewWrap.appendChild(overviewHeading)
+        overviewWrap.appendChild(overviewText)
+
+        movieEl.appendChild(poster)
+        movieEl.appendChild(movieInfo)
+        movieEl.appendChild(overviewWrap)
         main.appendChild(movieEl)
     })
 }
@@ -51,7 +91,13 @@ form.addEventListener('submit', event => {//only work on <form>
     //https://github.com/LEO0331/Mini_projects/blob/main/Random_Choice_Pick/script.js
     const searchTerm = search.value //user type in, can not use event.target.value
     if(searchTerm && searchTerm !== '') {//no empty search term
-        getMovies(SEARCH_API + searchTerm)//specific movie name
+        if(!apiKey) {
+            apiKey = getApiKey()
+            if(!apiKey) {
+                return
+            }
+        }
+        getMovies(getSearchApi(searchTerm))//specific movie name
         search.value = '' //clear the search term
     } else {
         window.location.reload()//reload the page if nothing
