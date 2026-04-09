@@ -9,6 +9,13 @@ This folder is the handoff package for teams using Codex or Claude Code to build
 - `codex-claude-usage.md`: copy-paste prompts and workflow for both tools.
 - `testing.md`: verification checklist and commands.
 
+## Deployed UI navigation
+
+The deployed Pages artifact includes:
+
+- `index.en.html` (English)
+- `index.zh-TW.html` (Traditional Chinese)
+
 ## Recommended usage order
 
 1. Read `prd.md` to align on scope and success criteria.

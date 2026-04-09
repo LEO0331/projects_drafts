@@ -42,6 +42,16 @@ Open `tools/skill-gen/web/index.html` in a browser.
 - Supports manual paste.
 - Provides CLI hint for local folder path handoff.
 
+### Language navigation
+
+- English: `index.en.html`
+- Traditional Chinese: `index.zh-TW.html`
+
+GitHub Pages links (replace placeholders):
+
+- English: `https://<your-org>.github.io/<your-repo>/index.en.html`
+- Traditional Chinese: `https://<your-org>.github.io/<your-repo>/index.zh-TW.html`
+
 ## Output sections
 
 - Feature Summary

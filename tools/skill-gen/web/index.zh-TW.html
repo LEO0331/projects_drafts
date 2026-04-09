@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'"
+    />
+    <title>3 檔案轉 SKILL.md 產生器</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="bg-grid" aria-hidden="true"></div>
+    <main class="app">
+      <header class="hero panel">
+        <div class="utility-bar">
+          <button id="helpBtn" class="btn-ghost utility-btn" type="button">使用說明</button>
+          <a class="lang-link" href="./index.en.html" lang="en">English</a>
+        </div>
+        <p class="kicker">Frontend Skill Forge</p>
+        <h1>把 3 個靜態檔案轉成可重用的 <code>SKILL.md</code></h1>
+        <p class="lead">
+          匯入任意小功能的 <code>index.html</code>、<code>style.css</code>、<code>script.js</code>，
+          產出可給 Codex、Claude Code 等 AI 工作流使用的結構化技能檔。
+        </p>
+        <div class="hero-meta" id="statusText">等待輸入中。</div>
+      </header>
+
+      <section class="panel input-panel">
+        <div class="section-head">
+          <h2>1. 基本設定</h2>
+          <p>設定輸出名稱與模式。</p>
+        </div>
+        <div class="field-grid two">
+          <label>功能名稱
+            <input id="featureName" placeholder="LoginForm" />
+          </label>
+          <label>模式
+            <select id="mode">
+              <option value="preserve">preserve（保留）</option>
+              <option value="modernize">modernize（現代化）</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="section-head">
+          <h2>2. 提供檔案</h2>
+          <p>可上傳檔案、選資料夾，或直接貼內容。</p>
+        </div>
+        <div class="field-grid two">
+          <label>上傳檔案
+            <input id="fileInput" type="file" multiple />
+          </label>
+          <label>選擇資料夾
+            <input id="folderInput" type="file" webkitdirectory directory multiple />
+          </label>
+        </div>
+        <p class="hint">資料夾模式需包含 <code>index.html</code>、<code>style.css</code>、<code>script.js</code>。</p>
+
+        <div class="section-head">
+          <h2>3. CLI 指令（選填）</h2>
+          <p>輸入本機資料夾路徑，自動產生 CLI 指令。</p>
+        </div>
+        <label>本機資料夾路徑
+          <input id="folderPath" placeholder="/path/to/feature-folder" />
+        </label>
+        <pre id="cliHint"></pre>
+
+        <div class="section-head">
+          <h2>4. 直接貼內容</h2>
+          <p>如果你已經有檔案內容，可直接貼在下方。</p>
+        </div>
+        <label>index.html
+          <textarea id="indexHtml" rows="8"></textarea>
+        </label>
+        <label>style.css
+          <textarea id="styleCss" rows="8"></textarea>
+        </label>
+        <label>script.js
+          <textarea id="scriptJs" rows="8"></textarea>
+        </label>
+
+        <div class="actions">
+          <button id="generateBtn" class="btn-primary">產生 SKILL.md</button>
+          <button id="downloadBtn" class="btn-ghost" disabled>下載</button>
+          <button id="copyBtn" class="btn-ghost" disabled>複製</button>
+        </div>
+      </section>
+
+      <section class="panel output-panel">
+        <div class="section-head output-head">
+          <h2>產生結果</h2>
+          <p>檢查後即可下載或複製 markdown 內容。</p>
+        </div>
+        <textarea id="output" rows="36" readonly></textarea>
+      </section>
+    </main>
+
+    <div id="helpModal" class="help-modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+      <div class="help-card">
+        <div class="help-head">
+          <h2 id="helpTitle">使用流程</h2>
+          <button id="closeHelpBtn" class="btn-ghost utility-btn" type="button">關閉</button>
+        </div>
+        <ol>
+          <li>先設定<strong>功能名稱</strong>與模式（`preserve` 或 `modernize`）。</li>
+          <li>用上傳、資料夾或貼上方式提供三個檔案內容。</li>
+          <li>確認三個必要檔案都已提供：`index.html`、`style.css`、`script.js`。</li>
+          <li>按下<strong>產生 SKILL.md</strong>。</li>
+          <li>使用<strong>下載</strong>或<strong>複製</strong>輸出內容。</li>
+        </ol>
+        <p class="hint">本機測試：可直接開啟本頁，或使用 `python3 -m http.server 8000` 後開啟 `/tools/skill-gen/web/index.zh-TW.html`。</p>
+        <p class="hint">部署後：分享 GitHub Pages 網址即可讓他人線上使用。</p>
+      </div>
+    </div>
+
+    <script src="../skillgen-core.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>

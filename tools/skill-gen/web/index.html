@@ -14,6 +14,10 @@
     <div class="bg-grid" aria-hidden="true"></div>
     <main class="app">
       <header class="hero panel">
+        <div class="utility-bar">
+          <button id="helpBtn" class="btn-ghost utility-btn" type="button">Help</button>
+          <a class="lang-link" href="./index.zh-TW.html" lang="zh-Hant">繁體中文</a>
+        </div>
         <p class="kicker">Frontend Skill Forge</p>
         <h1>Turn 3 Static Files Into a Reusable <code>SKILL.md</code></h1>
         <p class="lead">
@@ -92,6 +96,24 @@
         <textarea id="output" rows="36" readonly></textarea>
       </section>
     </main>
+
+    <div id="helpModal" class="help-modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+      <div class="help-card">
+        <div class="help-head">
+          <h2 id="helpTitle">How to Use</h2>
+          <button id="closeHelpBtn" class="btn-ghost utility-btn" type="button">Close</button>
+        </div>
+        <ol>
+          <li>Set <strong>Feature Name</strong> and choose a mode (`preserve` or `modernize`).</li>
+          <li>Provide files using upload, folder picker, or direct paste.</li>
+          <li>Confirm all three inputs are present: `index.html`, `style.css`, `script.js`.</li>
+          <li>Click <strong>Generate SKILL.md</strong>.</li>
+          <li>Use <strong>Download</strong> or <strong>Copy</strong> to export output.</li>
+        </ol>
+        <p class="hint">Local test: open this page directly or use `python3 -m http.server 8000` and browse to `/tools/skill-gen/web/index.html`.</p>
+        <p class="hint">After deployment, share your GitHub Pages URL so anyone can use it online.</p>
+      </div>
+    </div>
 
     <script src="../skillgen-core.js"></script>
     <script src="./script.js"></script>
