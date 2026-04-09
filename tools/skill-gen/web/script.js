@@ -9,6 +9,7 @@
   var helpBtn = document.getElementById('helpBtn');
   var closeHelpBtn = document.getElementById('closeHelpBtn');
   var helpModal = document.getElementById('helpModal');
+  var langToggleBtn = document.getElementById('langToggleBtn');
 
   var indexEl = document.getElementById('indexHtml');
   var styleEl = document.getElementById('styleCss');
@@ -112,12 +113,14 @@
     if (!helpModal) return;
     helpModal.hidden = false;
     helpModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
   }
 
   function closeHelp() {
     if (!helpModal) return;
     helpModal.hidden = true;
     helpModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
   }
 
   fileInput.addEventListener('change', function () {
@@ -140,8 +143,18 @@
   if (helpBtn) {
     helpBtn.addEventListener('click', openHelp);
   }
+
+  if (langToggleBtn) {
+    langToggleBtn.addEventListener('click', function () {
+      window.location.href = isZh ? './index.html' : './index.zh-TW.html';
+    });
+  }
   if (closeHelpBtn) {
-    closeHelpBtn.addEventListener('click', closeHelp);
+    closeHelpBtn.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      closeHelp();
+    });
   }
   if (helpModal) {
     helpModal.addEventListener('click', function (event) {
@@ -151,7 +164,7 @@
     });
   }
   document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape') {
+    if (event.key === 'Escape' && helpModal && !helpModal.hidden) {
       closeHelp();
     }
   });

@@ -15,8 +15,8 @@
     <main class="app">
       <header class="hero panel">
         <div class="utility-bar">
-          <button id="helpBtn" class="btn-ghost utility-btn" type="button">使用說明</button>
-          <a class="lang-link" href="./index.en.html" lang="en">English</a>
+          <button id="helpBtn" class="btn-ghost utility-icon-btn" type="button" aria-label="使用說明" title="使用說明">?</button>
+          <button id="langToggleBtn" class="btn-ghost utility-btn" type="button">EN</button>
         </div>
         <p class="kicker">Frontend Skill Forge</p>
         <h1>把 3 個靜態檔案轉成可重用的 <code>SKILL.md</code></h1>
@@ -101,7 +101,7 @@
       <div class="help-card">
         <div class="help-head">
           <h2 id="helpTitle">使用流程</h2>
-          <button id="closeHelpBtn" class="btn-ghost utility-btn" type="button">關閉</button>
+          <button id="closeHelpBtn" class="btn-ghost utility-btn" type="button" aria-label="關閉說明視窗">關閉</button>
         </div>
         <ol>
           <li>先設定<strong>功能名稱</strong>與模式（`preserve` 或 `modernize`）。</li>

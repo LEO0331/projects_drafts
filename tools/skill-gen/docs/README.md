@@ -13,7 +13,7 @@ This folder is the handoff package for teams using Codex or Claude Code to build
 
 The deployed Pages artifact includes:
 
-- `index.en.html` (English)
+- `index.html` (English)
 - `index.zh-TW.html` (Traditional Chinese)
 
 ## Recommended usage order

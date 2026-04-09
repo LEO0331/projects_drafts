@@ -44,12 +44,12 @@ Open `tools/skill-gen/web/index.html` in a browser.
 
 ### Language navigation
 
-- English: `index.en.html`
+- English: `index.html`
 - Traditional Chinese: `index.zh-TW.html`
 
 GitHub Pages links (replace placeholders):
 
-- English: `https://<your-org>.github.io/<your-repo>/index.en.html`
+- English: `https://<your-org>.github.io/<your-repo>/index.html`
 - Traditional Chinese: `https://<your-org>.github.io/<your-repo>/index.zh-TW.html`
 
 ## Output sections
