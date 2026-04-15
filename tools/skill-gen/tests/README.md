@@ -25,3 +25,11 @@ Coverage gate thresholds:
 - line coverage >= 85%
 - function coverage >= 85%
 - branch coverage >= 85%
+
+## 4) Run end-to-end web UI tests
+
+```bash
+npm run test:e2e --prefix tools/skill-gen
+```
+
+This spins up a local static server and runs Playwright tests against `web/index.html`.

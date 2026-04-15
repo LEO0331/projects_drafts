@@ -4,6 +4,10 @@
   "version": "1.0.0",
   "scripts": {
     "test": "node --test tests/unit/*.test.js",
-    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=skillgen-core.js --test-coverage-lines=85 --test-coverage-functions=85 --test-coverage-branches=85 tests/unit/*.test.js"
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=skillgen-core.js --test-coverage-lines=85 --test-coverage-functions=85 --test-coverage-branches=85 tests/unit/*.test.js",
+    "test:e2e": "playwright test -c playwright.config.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1"
   }
 }
