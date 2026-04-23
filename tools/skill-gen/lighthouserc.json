@@ -7,7 +7,9 @@
         "http://127.0.0.1:4173/index.zh-TW.html"
       ],
       "settings": {
-        "chromeFlags": "--headless=new --no-sandbox --disable-dev-shm-usage --disable-gpu",
+        "chromeFlags": "--headless --no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage --window-size=1365,900",
+        "emulatedFormFactor": "desktop",
+        "throttlingMethod": "provided",
         "maxWaitForFcp": 60000,
         "maxWaitForLoad": 120000
       }
