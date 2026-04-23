@@ -1,0 +1,115 @@
+name: Lighthouse Pages Preview
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Unit tests
+        run: npm test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build static preview bundle
+        run: |
+          rm -rf dist
+          mkdir -p dist/web
+          cp -R web/. dist/web/
+          cp skillgen-core.js dist/skillgen-core.js
+          cat > dist/index.html <<'EOF'
+          <!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="UTF-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+              <meta http-equiv="refresh" content="0; url=./web/index.html" />
+              <title>Skill Gen Preview</title>
+            </head>
+            <body>
+              <p>Redirecting to preview app...</p>
+            </body>
+          </html>
+          EOF
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  lighthouse:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Lighthouse CI on deployed Pages URLs
+        id: lhci
+        uses: treosh/lighthouse-ci-action@v12
+        continue-on-error: true
+        with:
+          urls: |
+            ${{ needs.deploy.outputs.page_url }}/web/index.html
+            ${{ needs.deploy.outputs.page_url }}/web/index.zh-TW.html
+          configPath: ./lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Publish Lighthouse links to job summary
+        if: always()
+        env:
+          PAGE_URL: ${{ needs.deploy.outputs.page_url }}
+          LH_LINKS: ${{ steps.lhci.outputs.links }}
+        run: |
+          {
+            echo "## Preview URL"
+            echo "${PAGE_URL}/web/index.html"
+            echo
+            echo "## Lighthouse Temporary Public Dashboard/Reports"
+            if [ -n "${LH_LINKS}" ]; then
+              echo "${LH_LINKS}"
+            else
+              echo "Lighthouse did not return public links in this run."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

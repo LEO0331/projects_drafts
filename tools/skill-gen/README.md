@@ -49,8 +49,16 @@ Open `tools/skill-gen/web/index.html` in a browser.
 
 GitHub Pages links (replace placeholders):
 
-- English: `https://<your-org>.github.io/<your-repo>/index.html`
-- Traditional Chinese: `https://<your-org>.github.io/<your-repo>/index.zh-TW.html`
+- English: `https://<your-org>.github.io/<your-repo>/web/index.html`
+- Traditional Chinese: `https://<your-org>.github.io/<your-repo>/web/index.zh-TW.html`
+
+## Lighthouse CI + Pages Preview
+
+GitHub Action: `.github/workflows/lighthouse-pages.yml`
+
+- Deploys a temporary preview to GitHub Pages.
+- Runs Lighthouse on both language pages.
+- Publishes temporary public Lighthouse report links in the Actions Job Summary.
 
 ## Output sections
 
