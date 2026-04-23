@@ -79,4 +79,16 @@ test.describe('skill-gen web UI', () => {
     await expect(page.locator('#folderInput')).toHaveAttribute('title', 'Folder input');
     await expect(page.locator('#folderInput')).toHaveAttribute('aria-label', 'Folder input');
   });
+
+  test('output textarea has accessible label in both languages', async ({ page }) => {
+    await page.goto('/web/index.html');
+    await expect(page.locator('#outputHeading')).toHaveText('Generated Output');
+    await expect(page.locator('#output')).toHaveAttribute('aria-labelledby', 'outputHeading');
+    await expect(page.locator('#output')).toHaveAttribute('title', 'Generated output');
+
+    await page.goto('/web/index.zh-TW.html');
+    await expect(page.locator('#outputHeading')).toHaveText('產生結果');
+    await expect(page.locator('#output')).toHaveAttribute('aria-labelledby', 'outputHeading');
+    await expect(page.locator('#output')).toHaveAttribute('title', '產生結果');
+  });
 });
