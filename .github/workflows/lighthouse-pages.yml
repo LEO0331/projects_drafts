@@ -43,16 +43,19 @@ jobs:
 
       - name: Start local server
         run: |
-          npx --yes http-server _site -p 4173 >/tmp/skill-gen-http.log 2>&1 &
+          npx --yes http-server _site -a 127.0.0.1 -p 4173 -c-1 >/tmp/skill-gen-http.log 2>&1 &
           echo $! > /tmp/skill-gen-http.pid
           npx --yes wait-on http://127.0.0.1:4173/index.html http://127.0.0.1:4173/index.zh-TW.html
+
+      - name: Sanity check served pages
+        run: |
+          curl -fsS http://127.0.0.1:4173/index.html | head -n 5
+          curl -fsS http://127.0.0.1:4173/index.zh-TW.html | head -n 5
 
       - name: Run Lighthouse CI
         uses: treosh/lighthouse-ci-action@v12
         with:
-          urls: |
-            http://127.0.0.1:4173/index.html
-            http://127.0.0.1:4173/index.zh-TW.html
+          configPath: ./tools/skill-gen/lighthouserc.json
           uploadArtifacts: true
           temporaryPublicStorage: true
 
@@ -61,4 +64,8 @@ jobs:
         run: |
           if [ -f /tmp/skill-gen-http.pid ]; then
             kill "$(cat /tmp/skill-gen-http.pid)" || true
+          fi
+          if [ -f /tmp/skill-gen-http.log ]; then
+            echo "---- http-server log ----"
+            cat /tmp/skill-gen-http.log
           fi
