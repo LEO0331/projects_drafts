@@ -40,6 +40,24 @@ jobs:
           cp tools/skill-gen/skillgen-core.js _site/skillgen-core.js
           sed -i 's#../skillgen-core.js#./skillgen-core.js#g' _site/index.html
           sed -i 's#../skillgen-core.js#./skillgen-core.js#g' _site/index.zh-TW.html
+          cat > _site/lhci.css <<'EOF'
+          * {
+            animation: none !important;
+            transition: none !important;
+          }
+          body {
+            background: #111 !important;
+            color: #eee !important;
+          }
+          .bg-grid {
+            display: none !important;
+          }
+          .panel {
+            backdrop-filter: none !important;
+          }
+          EOF
+          sed -i 's#<link rel="stylesheet" href="./style.css" />#<link rel="stylesheet" href="./style.css" />\n    <link rel="stylesheet" href="./lhci.css" />#g' _site/index.html
+          sed -i 's#<link rel="stylesheet" href="./style.css" />#<link rel="stylesheet" href="./style.css" />\n    <link rel="stylesheet" href="./lhci.css" />#g' _site/index.zh-TW.html
 
       - name: Start local server
         run: |
@@ -54,12 +72,25 @@ jobs:
           curl -I http://127.0.0.1:4173/index.html
           curl -I http://127.0.0.1:4173/index.zh-TW.html
 
-      - name: Run Lighthouse CI
-        uses: treosh/lighthouse-ci-action@v12
+      - name: Run Lighthouse collect in virtual display (xvfb)
+        run: |
+          if ! command -v xvfb-run >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y xvfb
+          fi
+          xvfb-run -a npx --yes @lhci/cli@0.15.x collect --config=./tools/skill-gen/lighthouserc.json
+
+      - name: Upload Lighthouse reports to temporary public storage
+        run: |
+          npx --yes @lhci/cli@0.15.x upload --target=temporary-public-storage --config=./tools/skill-gen/lighthouserc.json
+
+      - name: Upload Lighthouse artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          configPath: ./tools/skill-gen/lighthouserc.json
-          uploadArtifacts: true
-          temporaryPublicStorage: true
+          name: lighthouseci-reports
+          path: .lighthouseci
+          if-no-files-found: ignore
 
       - name: Stop local server
         if: always()
