@@ -35,6 +35,7 @@ jobs:
           cp -R tools/skill-gen/web/. _site/
           cp tools/skill-gen/skillgen-core.js _site/skillgen-core.js
           sed -i 's#../skillgen-core.js#./skillgen-core.js#g' _site/index.html
+          sed -i 's#../skillgen-core.js#./skillgen-core.js#g' _site/index.zh-TW.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

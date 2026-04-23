@@ -1,0 +1,64 @@
+name: Lighthouse skill-gen Web UI
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "tools/skill-gen/**"
+      - ".github/workflows/lighthouse-pages.yml"
+  pull_request:
+    paths:
+      - "tools/skill-gen/**"
+      - ".github/workflows/lighthouse-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: tools/skill-gen/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --prefix tools/skill-gen
+
+      - name: Build static site artifact for Lighthouse
+        run: |
+          rm -rf _site
+          mkdir -p _site
+          cp -R tools/skill-gen/web/. _site/
+          cp tools/skill-gen/skillgen-core.js _site/skillgen-core.js
+          sed -i 's#../skillgen-core.js#./skillgen-core.js#g' _site/index.html
+          sed -i 's#../skillgen-core.js#./skillgen-core.js#g' _site/index.zh-TW.html
+
+      - name: Start local server
+        run: |
+          npx --yes http-server _site -p 4173 >/tmp/skill-gen-http.log 2>&1 &
+          echo $! > /tmp/skill-gen-http.pid
+          npx --yes wait-on http://127.0.0.1:4173/index.html http://127.0.0.1:4173/index.zh-TW.html
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            http://127.0.0.1:4173/index.html
+            http://127.0.0.1:4173/index.zh-TW.html
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Stop local server
+        if: always()
+        run: |
+          if [ -f /tmp/skill-gen-http.pid ]; then
+            kill "$(cat /tmp/skill-gen-http.pid)" || true
+          fi
