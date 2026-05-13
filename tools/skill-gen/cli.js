@@ -2,23 +2,32 @@
 const fs = require('fs');
 const path = require('path');
 const { generateSkillMarkdown } = require('./skillgen-core');
+const VALID_MODES = new Set(['preserve', 'modernize']);
 
 function parseArgs(argv) {
   const out = { mode: 'preserve' };
   for (let i = 2; i < argv.length; i += 1) {
     const key = argv[i];
     const val = argv[i + 1];
-    if (key === '--dir') { out.dir = val; i += 1; continue; }
-    if (key === '--index') { out.index = val; i += 1; continue; }
-    if (key === '--style') { out.style = val; i += 1; continue; }
-    if (key === '--script') { out.script = val; i += 1; continue; }
-    if (key === '--out') { out.out = val; i += 1; continue; }
-    if (key === '--name') { out.name = val; i += 1; continue; }
-    if (key === '--mode') { out.mode = val; i += 1; continue; }
+    if (key === '--dir') { out.dir = expectValue(key, val); i += 1; continue; }
+    if (key === '--index') { out.index = expectValue(key, val); i += 1; continue; }
+    if (key === '--style') { out.style = expectValue(key, val); i += 1; continue; }
+    if (key === '--script') { out.script = expectValue(key, val); i += 1; continue; }
+    if (key === '--out') { out.out = expectValue(key, val); i += 1; continue; }
+    if (key === '--name') { out.name = expectValue(key, val); i += 1; continue; }
+    if (key === '--mode') { out.mode = expectValue(key, val); i += 1; continue; }
     if (key === '--print') { out.print = true; continue; }
     if (key === '--help' || key === '-h') { out.help = true; continue; }
+    throw new Error(`Unknown argument: ${key}`);
   }
   return out;
+}
+
+function expectValue(key, value) {
+  if (!value || value.startsWith('--')) {
+    throw new Error(`Missing value for ${key}`);
+  }
+  return value;
 }
 
 function usage() {
@@ -35,6 +44,10 @@ function readText(filePath) {
 }
 
 function resolveInputs(args) {
+  if (!VALID_MODES.has(args.mode)) {
+    throw new Error(`Invalid --mode "${args.mode}". Use preserve or modernize.`);
+  }
+
   if (args.dir) {
     const base = path.resolve(args.dir);
     return {
@@ -82,4 +95,12 @@ function main() {
   }
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = {
+  parseArgs,
+  resolveInputs,
+  usage
+};
