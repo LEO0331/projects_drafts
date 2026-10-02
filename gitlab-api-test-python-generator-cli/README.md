@@ -54,7 +54,9 @@ import openapi_client
 
 ### Tests
 
-Execute `pytest` to run the tests.
+Use Python 3.10+ for the test dependencies, including pytest 9.1.1.
+Install them with `python -m pip install -r requirements.txt -r test-requirements.txt`,
+then execute `python -m pytest` to run the tests.
 
 ## Getting Started
 
