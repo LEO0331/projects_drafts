@@ -1,0 +1,49 @@
+name: Dependency security lock validation
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/dependency-security-locks.yml"
+      - "gitlab-api-test-python-generator-cli/pyproject.toml"
+      - "gitlab-api-test-python-generator-cli/poetry.lock"
+      - "testing/package.json"
+      - "testing/package-lock.json"
+
+permissions:
+  contents: read
+
+jobs:
+  python-lock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Poetry
+        run: python -m pip install poetry==2.2.1
+      - name: Verify Poetry lockfile
+        working-directory: gitlab-api-test-python-generator-cli
+        run: poetry check --lock
+      - name: Install locked Python dependencies
+        working-directory: gitlab-api-test-python-generator-cli
+        run: poetry install --no-root
+      - name: Confirm patched filelock is installed
+        working-directory: gitlab-api-test-python-generator-cli
+        run: poetry run python -c "from importlib.metadata import version; assert version('filelock') == '4.2.8'"
+
+  npm-lock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install locked npm dependencies
+        working-directory: testing
+        run: npm ci --ignore-scripts
+      - name: Confirm patched minimatch is installed throughout the tree
+        working-directory: testing
+        run: |
+          npm ls minimatch --all
+          node -e "const fs = require('node:fs'); const p = JSON.parse(fs.readFileSync('package-lock.json', 'utf8')); for (const [path, pkg] of Object.entries(p.packages)) if (path.endsWith('/minimatch') && pkg.version !== '11.0.1') process.exit(1)"
