@@ -21,16 +21,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
           cache-dependency-path: tools/skill-gen/package-lock.json
 
       - name: Install dependencies
-        run: npm ci --prefix tools/skill-gen
+        run: npm ci --prefix tools/skill-gen --ignore-scripts
 
       - name: Build static site artifact for Lighthouse
         run: |
@@ -61,9 +63,10 @@ jobs:
 
       - name: Start local server
         run: |
-          npx --yes http-server _site -a 127.0.0.1 -p 4173 -c-1 >/tmp/skill-gen-http.log 2>&1 &
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory _site >/tmp/skill-gen-http.log 2>&1 &
           echo $! > /tmp/skill-gen-http.pid
-          npx --yes wait-on http://127.0.0.1:4173/index.html http://127.0.0.1:4173/index.zh-TW.html
+          curl -fsSI --retry 10 --retry-connrefused --retry-delay 1 http://127.0.0.1:4173/index.html
+          curl -fsSI http://127.0.0.1:4173/index.zh-TW.html
 
       - name: Sanity check served pages
         run: |
@@ -78,11 +81,11 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y xvfb
           fi
-          xvfb-run -a npx --yes @lhci/cli@0.15.x collect --config=./tools/skill-gen/lighthouserc.json
+          xvfb-run -a tools/skill-gen/node_modules/.bin/lhci collect --config=./tools/skill-gen/lighthouserc.json
 
       - name: Upload Lighthouse reports to temporary public storage
         run: |
-          npx --yes @lhci/cli@0.15.x upload --target=temporary-public-storage --config=./tools/skill-gen/lighthouserc.json
+          tools/skill-gen/node_modules/.bin/lhci upload --target=temporary-public-storage --config=./tools/skill-gen/lighthouserc.json
 
       - name: Upload Lighthouse artifacts
         if: always()

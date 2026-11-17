@@ -55,29 +55,40 @@ function generatePassword(length, lower, upper, number, symbol) {
     }
     //return generatedPassword.slice(0, length)
     let result = ''
-    let len = length
+    let len = Math.ceil(length)
     for(let i = 0; i < length; i++) {//randomize the order of generatedPassword
-        let r = Math.floor(Math.random() * len)
+        const r = randomIndex(len)
         result += generatedPassword.charAt(r)
         generatedPassword = generatedPassword.slice(0, r) + generatedPassword.slice(r+1, len)
         len--
     }
     return result//finalPassword
 }
+
+function randomIndex(size) {
+    const range = 2 ** 32
+    const limit = range - (range % size)
+    const sample = new Uint32Array(1)
+    do {
+        crypto.getRandomValues(sample)
+    } while (sample[0] >= limit)
+    return sample[0] % size
+}
+
 //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/fromCharCode
 function getRandomLower() {//lower case letter start at code 97
-    return String.fromCharCode(Math.floor(Math.random() * 26) + 97)//0-25
+    return String.fromCharCode(randomIndex(26) + 97)//0-25
 }
 
 function getRandomUpper() {//upper case letter start at code 65
-    return String.fromCharCode(Math.floor(Math.random() * 26) + 65)
+    return String.fromCharCode(randomIndex(26) + 65)
 }
 
 function getRandomNumber() {//number start at code 48
-    return String.fromCharCode(Math.floor(Math.random() * 10) + 48)//0-9
+    return String.fromCharCode(randomIndex(10) + 48)//0-9
 }
 //https://www.freeformatter.com/html-entities.html
 function getRandomSymbol() {
     const symbols = '!@#$%^&*(){}[]=<>/,.'//decide all symbol types
-    return symbols[Math.floor(Math.random() * symbols.length)]//20
+    return symbols[randomIndex(symbols.length)]//20
 }

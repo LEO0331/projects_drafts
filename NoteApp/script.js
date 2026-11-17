@@ -7,26 +7,19 @@ if(notes) {//fetch the stored notes
 
 addBtn.addEventListener('click', () => addNewNote())
 
-function sanitizeMarkedHtml(html) {
-    const template = document.createElement('template')
-    template.innerHTML = html
-    const blockedTags = ['script', 'style', 'iframe', 'object', 'embed', 'link', 'meta']
-    blockedTags.forEach(tag => {
-        template.content.querySelectorAll(tag).forEach(node => node.remove())
+function renderNote(container, text) {
+    if (!window.marked || !window.DOMPurify?.isSupported) {
+        container.textContent = text
+        return
+    }
+
+    const content = DOMPurify.sanitize(marked.parse(text), {
+        USE_PROFILES: { html: true },
+        FORBID_TAGS: ['style', 'form', 'template'],
+        FORBID_ATTR: ['style'],
+        RETURN_DOM_FRAGMENT: true
     })
-    template.content.querySelectorAll('*').forEach(node => {
-        Array.from(node.attributes).forEach(attr => {
-            const name = attr.name.toLowerCase()
-            const value = attr.value
-            if(name.startsWith('on')) {
-                node.removeAttribute(attr.name)
-            }
-            if((name === 'href' || name === 'src') && /^\s*javascript:/i.test(value)) {
-                node.removeAttribute(attr.name)
-            }
-        })
-    })
-    return template.innerHTML
+    container.replaceChildren(content)
 }
 
 function addNewNote(text = '') {//argument text = nothing by default
@@ -45,7 +38,7 @@ function addNewNote(text = '') {//argument text = nothing by default
     const main = note.querySelector('.main')
     const textArea = note.querySelector('textarea')//tag
     textArea.value = text
-    main.innerHTML = sanitizeMarkedHtml(marked(text))//markdown output sanitized
+    renderNote(main, text)
     deleteBtn.addEventListener('click', () => {
         note.remove()//delete the note
         updateLS()
@@ -56,7 +49,7 @@ function addNewNote(text = '') {//argument text = nothing by default
     })
     textArea.addEventListener('input', event => {
         const { value } = event.target//any input/content in the text area
-        main.innerHTML = sanitizeMarkedHtml(marked(value))
+        renderNote(main, value)
         updateLS()
     })
     document.body.appendChild(note)//browser body

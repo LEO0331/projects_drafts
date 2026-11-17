@@ -82,6 +82,7 @@ const getPokemonbyName = async (url) => {
 }
 
 const createPokemonCard = (pokemon) => {
+    if (!Number.isSafeInteger(pokemon.id) || pokemon.id < 1) return
     const pokemonEl = document.createElement('div') //create div
     listItems.push(pokemonEl)
     pokemonEl.classList.add('pokemon')
@@ -93,17 +94,22 @@ const createPokemonCard = (pokemon) => {
     const type = main_types.filter(type => poke_types.indexOf(type) > -1) //all types
     const color = colors[type[0]]
     pokemonEl.style.backgroundColor = color
-    const pokemonInnerHTML = `
+    pokemonEl.innerHTML = `
     <div class="img-container">
-        <img src="https://pokeres.bastionbot.org/images/pokemon/${pokemon.id}.png" alt="${pokemon.name}">
+        <img>
     </div>
     <div class="info">
-        <span class="number">#${id}</span>
-        <h3 class="name">${name}</h3>
-        <small class="type">Type: <span>${type}</span> </small>
+        <span class="number"></span>
+        <h3 class="name"></h3>
+        <small class="type">Type: <span></span> </small>
     </div>
     `
-    pokemonEl.innerHTML = pokemonInnerHTML //put pokemon info into index.html
+    const image = pokemonEl.querySelector('img')
+    image.src = `https://pokeres.bastionbot.org/images/pokemon/${pokemon.id}.png`
+    image.alt = pokemon.name
+    pokemonEl.querySelector('.number').textContent = `#${id}`
+    pokemonEl.querySelector('.name').textContent = name
+    pokemonEl.querySelector('.type span').textContent = type.join(',')
     container.appendChild(pokemonEl) //under <div class="poke-container" id="poke-container">
 }
 /*
