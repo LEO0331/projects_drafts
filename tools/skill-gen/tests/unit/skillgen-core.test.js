@@ -68,7 +68,7 @@ test('generates full markdown and extracted facts for rich input', () => {
   assert.ok(result.facts.warnings.some((w) => w.includes('network-fetch')));
   assert.ok(result.facts.warnings.some((w) => w.includes('query parameters')));
 
-  assert.ok(result.markdown.includes('name: my-feature'));
+  assert.ok(result.markdown.includes('name: "my-feature"'));
   assert.ok(result.markdown.includes('mode: modernize'));
   assert.ok(result.markdown.includes('- Behavior flags: network-fetch, local-storage, session-storage, timers/animation-loop'));
 });
@@ -98,4 +98,34 @@ test('throws for oversized content', () => {
     () => generateSkillMarkdown({ indexHtml: tooBig, styleCss: '', scriptJs: '' }),
     /Input too large/
   );
+});
+
+test('redacts credentials from dependency and other exported facts', () => {
+  const url = 'https://demo-user:demo-password@example.test/data?lang=en&%61pi_key=demo-query#access_token=demo-fragment';
+  const result = generateSkillMarkdown({
+    indexHtml: '<title>' + url + '</title>' +
+      '<script src="https://cdn.example.test/lib.js?v=2&amp;token=demo-cdn&amp;lang=en"></script>',
+    styleCss: '[data-api="' + url + '"] { display: block; }',
+    scriptJs: "document.querySelector('" + url + "');"
+  });
+
+  assert.doesNotMatch(JSON.stringify(result), /demo-(user|password|query|fragment|cdn)/);
+  assert.equal(result.facts.html.title, 'https://example.test/data?lang=en&%61pi_key=REDACTED#access_token=REDACTED');
+  assert.ok(result.facts.deps.externalUrls.includes('https://cdn.example.test/lib.js?v=2&amp;token=REDACTED&amp;lang=en'));
+  assert.ok(result.facts.warnings.some((warning) => warning.includes('usernames and passwords')));
+});
+
+test('serializes metadata and preserves literal punctuation in extracted values', () => {
+  const result = generateSkillMarkdown({
+    sourceName: 'Forecast: "Today"\u2028Overview',
+    mode: 'preview',
+    indexHtml: '<title>Week `one`\r\nForecast</title>'
+  });
+  const [, name, , source, mode, delimiter] = result.markdown.split('\n');
+
+  assert.equal(JSON.parse(name.slice('name: '.length)), 'forecast-today-overview');
+  assert.equal(JSON.parse(source.slice('source: '.length)), 'Forecast: "Today" Overview');
+  assert.equal(mode, 'mode: preserve');
+  assert.equal(delimiter, '---');
+  assert.ok(result.markdown.includes('- Base title: ``Week `one`  Forecast``'));
 });

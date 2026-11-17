@@ -12,11 +12,9 @@ async function getData() {
             <div class="card bg-light">
               <div class="card-body text-center">
                 <img
-                  src="${user.picture.large}"
                   class="rounded-circle mb-3"
-                  alt="${user.name.first}"
                 />
-                <h3 class="card-title mb-3">${user.name.first} ${user.name.last}</h3>
+                <h3 class="card-title mb-3"></h3>
                 <p class="card-text">
                   Lorem ipsum dolor sit amet consectetur adipisicing elit.
                   Assumenda accusamus nobis sed cupiditate iusto? Quibusdam.
@@ -27,8 +25,23 @@ async function getData() {
                 <a href="#"><i class="bi bi-instagram text-dark mx-1"></i></a>
               </div>
             </div>
-          </div>
         `
+        const portrait = div.querySelector('img')
+        portrait.alt = user.name.first
+        const portraitUrl = getPortraitUrl(user.picture.large)
+        if (portraitUrl) portrait.src = portraitUrl
+        div.querySelector('h3').textContent = `${user.name.first} ${user.name.last}`
         people.appendChild(div)
     })
+}
+
+function getPortraitUrl(value) {
+    try {
+        const url = new URL(value)
+        if (url.protocol === 'https:' && url.host === 'randomuser.me' && !url.username && !url.password) {
+            return url.href
+        }
+    } catch {
+        // Leave the image without a source when the URL is invalid.
+    }
 }
